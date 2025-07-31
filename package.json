@@ -10,7 +10,8 @@
     "help": "node update_cache.js --help"
   },
   "dependencies": {
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "dotenv": "^16.4.5"
   },
   "keywords": [
     "solana",
@@ -27,6 +28,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/solana-leaderboard"
+    "url": "https://github.com/V0rtech/solana-leaderboard"
   }
 }
