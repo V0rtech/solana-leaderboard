@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUST Token Leaderboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(180deg, #1a0d2e 0%, #2d1b69 30%, #4c1d95 70%, #6b21a8 100%);
+            color: #d4af37;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .leaderboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(26, 13, 46, 0.8);
+            border-radius: 20px;
+            border: 3px solid #d4af37;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .leaderboard-header {
+            background: linear-gradient(45deg, #2d1b69, #4c1d95);
+            padding: 25px;
+            text-align: center;
+            border-bottom: 2px solid #d4af37;
+            position: relative;
+        }
+
+        .back-nav {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .back-nav:hover {
+            opacity: 1;
+            color: #ffd700;
+        }
+
+        .leaderboard-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ffd700, #ffec8b, #d4af37);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .leaderboard-subtitle {
+            font-size: 1rem;
+            color: #d4af37;
+            opacity: 0.9;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .leaderboard-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .page-info, .last-updated {
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(45deg, #ffd700, #ffec8b);
+            color: #1a0d2e;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .cache-notice {
+            background: rgba(144, 238, 144, 0.1);
+            border: 1px solid rgba(144, 238, 144, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #90EE90;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #d4af37;
+            font-size: 1.1rem;
+        }
+
+        .loading::after {
+            content: '';
+            animation: dots 2s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        .token-list {
+            padding: 0;
+            background: rgba(26, 13, 46, 0.8);
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-header {
+            background: linear-gradient(45deg, #2d1b69, #4c1d95);
+            border-bottom: 2px solid #d4af37;
+        }
+
+        .table-header th {
+            padding: 15px;
+            text-align: left;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: #ffd700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .table-header th:first-child {
+            text-align: center;
+            width: 60px;
+        }
+
+        .table-header th:nth-child(2) {
+            width: 160px;
+        }
+
+        .table-header th:nth-child(3),
+        .table-header th:nth-child(4),
+        .table-header th:nth-child(5),
+        .table-header th:nth-child(6),
+        .table-header th:nth-child(7),
+        .table-header th:nth-child(8) {
+            text-align: center;
+            width: 100px;
+        }
+
+        .table-header th:nth-child(3) {
+            width: 80px; /* Holders */
+        }
+
+        .table-header th:nth-child(4) {
+            width: 110px; /* Market Cap */
+        }
+
+        .table-header th:nth-child(5) {
+            width: 110px; /* Volume */
+        }
+
+        .table-header th:nth-child(6) {
+            width: 90px; /* Price */
+        }
+
+        .table-header th:nth-child(7) {
+            width: 120px; /* Created */
+        }
+
+        .table-header th:nth-child(8) {
+            width: 140px; /* Contract Address */
+        }
+
+        .token-row {
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .token-row:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .token-row td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .rank-cell {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        .token-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .token-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ffd700, #d4af37);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .token-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .token-details {
+            flex: 1;
+        }
+
+        .token-symbol {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 3px;
+        }
+
+        .token-name {
+            font-size: 0.8rem;
+            color: #d4af37;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .stat-cell {
+            text-align: center;
+            font-weight: 600;
+            color: #d4af37;
+        }
+
+        .stat-cell.holders {
+            color: #90EE90;
+        }
+
+        .stat-cell.market-cap {
+            color: #ffd700;
+        }
+
+        .stat-cell.volume {
+            color: #d4af37;
+        }
+
+        .stat-cell.volume.low {
+            color: #90EE90;
+        }
+
+        .stat-cell.volume.medium {
+            color: #FFD700;
+        }
+
+        .stat-cell.volume.high {
+            color: #FF6B6B;
+        }
+
+        .stat-cell.price {
+            color: #c084fc;
+        }
+
+        .stat-cell.graduation {
+            color: #a855f7;
+            font-size: 0.85rem;
+        }
+
+        .stable-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #90EE90, #7FDD7F);
+            color: #1a0d2e;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .stat-cell.contract-address {
+            color: #c084fc;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .contract-short:hover {
+            color: #ffd700 !important;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+
+        .graduation-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #a855f7, #c084fc);
+            color: #ffffff;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            color: #FF6B6B;
+            font-size: 1.1rem;
+        }
+
+        .filters {
+            padding: 20px;
+            background: rgba(45, 27, 105, 0.3);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .filters-title {
+            color: #ffd700;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filters-info {
+            font-size: 0.8rem;
+            color: #d4af37;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .page-btn {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover {
+            background: rgba(212, 175, 55, 0.3);
+            color: #ffd700;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .leaderboard-title {
+                font-size: 1.5rem;
+            }
+            
+            .back-nav {
+                position: relative;
+                left: 0;
+                top: 0;
+                display: block;
+                margin-bottom: 15px;
+            }
+            
+            .leaderboard-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            /* Hide graduated and contract address columns on mobile */
+            .table-header th:nth-child(7),
+            .table-header th:nth-child(8) {
+                display: none;
+            }
+
+            .token-row td:nth-child(7),
+            .token-row td:nth-child(8) {
+                display: none;
+            }
+
+            /* Adjust remaining column widths for mobile */
+            .table-header th:nth-child(2) {
+                width: 140px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            /* Hide only contract address on medium screens */
+            .table-header th:nth-child(8) {
+                display: none;
+            }
+
+            .token-row td:nth-child(8) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="leaderboard-container">
+        <div class="leaderboard-header">
+            <a href="index.html" class="back-nav">← Back to Magic Trench Dust</a>
+            <h1 class="leaderboard-title">✨ SOLANA DUST LEADERBOARD ✨</h1>
+            <p class="leaderboard-subtitle">Graduated Dust •  Sorted by Stability (Volume + Age)</p>
+            <div class="leaderboard-info">
+                <span class="page-info">Total Results: <span id="totalResults">-</span></span>
+                <button class="refresh-btn" onclick="refreshData()">🔄 Refresh Cache</button>
+                <span class="last-updated">Last Updated: <span id="lastUpdated">-</span></span>
+            </div>
+        </div>
+
+        <div class="cache-notice">
+            <strong>📡 Accumulative Cache:</strong> Tokens accumulate over time • Updated Every hour • Will continously recheck and add dust
+        </div>
+
+        <div class="filters">
+            <div class="filters-title">Active Filters</div>
+            <div class="filters-info">
+                • Graduated and created 24+ hours ago (excludes fresh migrations)<br>
+                • 75+ holders (individually verified)<br>
+                • Market cap: $10K - $200K<br>
+                • Volume: $50 - $500K (24h)<br>
+                • Sorted by stability score (60% volume, 40% age)<br>
+                • Click contract address to copy
+            </div>
+        </div>
+
+        <div id="loadingIndicator" class="loading">
+            Loading accumulated token data
+        </div>
+
+        <div id="tokenList" class="token-list" style="display: none;">
+            <!-- Tokens will be populated here -->
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;">
+            Failed to load cached data. Please try again later.
+        </div>
+
+        <div id="pagination" class="pagination" style="display: none;">
+            <button class="page-btn" id="prevBtn" onclick="changePage(-1)">← Previous</button>
+            <span id="pageInfo">Page 1 of 1</span>
+            <button class="page-btn" id="nextBtn" onclick="changePage(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        const CACHE_FILE = './token_cache.json';
+        let currentTokens = [];
+        let currentPage = 1;
+        let totalResults = 0;
+        const tokensPerPage = 20;
+
+        async function loadCachedTokens() {
+            try {
+                console.log('📡 Loading tokens from cache file...');
+                const response = await fetch(CACHE_FILE + '?t=' + Date.now());
+                
+                if (!response.ok) {
+                    throw new Error(`Cache file not found (${response.status}). Please ensure token_cache.json exists.`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.tokens || !Array.isArray(data.tokens)) {
+                    throw new Error('Invalid cache format. Expected { tokens: [...] }');
+                }
+                
+                console.log(`✅ Loaded ${data.tokens.length} tokens from cache`);
+                console.log(`📅 Cache updated: ${new Date(data.lastUpdated).toLocaleString()}`);
+                
+                return {
+                    tokens: data.tokens,
+                    lastUpdated: data.lastUpdated,
+                    totalFiltered: data.totalFiltered || data.tokens.length,
+                    newTokensAdded: data.newTokensAdded || 0,
+                    existingTokensKept: data.existingTokensKept || 0
+                };
+                
+            } catch (error) {
+                console.error('❌ Error loading cache:', error);
+                throw error;
+            }
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+
+        function formatPrice(price) {
+            if (price < 0.001) {
+                return price.toFixed(6);
+            } else if (price < 1) {
+                return price.toFixed(4);
+            }
+            return price.toFixed(2);
+        }
+
+        function getVolumeClass(volume) {
+            if (volume < 50000) return 'low';
+            if (volume < 200000) return 'medium';
+            return 'high';
+        }
+
+        function getTokenIcon(token) {
+            if (token.image) {
+                return `<img src="${token.image}" alt="${token.symbol}" onerror="this.style.display='none'; this.parentNode.innerHTML='💎';">`;
+            }
+            return '💎';
+        }
+
+        function formatGraduationTime(token) {
+            if (token.timeSinceGraduation) {
+                return token.timeSinceGraduation;
+            } else if (token.graduationAge) {
+                const hours = Math.floor(token.graduationAge / (1000 * 60 * 60));
+                const days = Math.floor(hours / 24);
+                
+                if (days > 0) {
+                    return days + ' day' + (days === 1 ? '' : 's') + ' ago';
+                } else {
+                    return hours + ' hour' + (hours === 1 ? '' : 's') + ' ago';
+                }
+            }
+            return 'Unknown';
+        }
+
+        function formatContractAddress(mint) {
+            if (!mint) return 'Unknown';
+            if (mint.length <= 12) return mint;
+            return mint.slice(0, 4) + '...' + mint.slice(-4);
+        }
+
+        function copyToClipboard(text, element) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = element.textContent;
+                element.textContent = 'Copied!';
+                element.style.color = '#90EE90';
+                setTimeout(() => {
+                    element.textContent = originalText;
+                    element.style.color = '';
+                }, 1500);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const originalText = element.textContent;
+                element.textContent = 'Copied!';
+                element.style.color = '#90EE90';
+                setTimeout(() => {
+                    element.textContent = originalText;
+                    element.style.color = '';
+                }, 1500);
+            });
+        }
+
+        function renderTokens(tokens) {
+            const tokenList = document.getElementById('tokenList');
+            const startIndex = (currentPage - 1) * tokensPerPage;
+            const endIndex = startIndex + tokensPerPage;
+            const pageTokens = tokens.slice(startIndex, endIndex);
+
+            if (pageTokens.length === 0) {
+                tokenList.innerHTML = '<div class="error-message">No tokens found in cache.</div>';
+                return;
+            }
+
+            tokenList.innerHTML = `
+                <table class="leaderboard-table">
+                    <thead class="table-header">
+                        <tr>
+                            <th>#</th>
+                            <th>Token</th>
+                            <th>Holders</th>
+                            <th>Market Cap</th>
+                            <th>24h Volume</th>
+                            <th>Price</th>
+                            <th>Created</th>
+                            <th>Contract Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${pageTokens.map((token, index) => {
+                            const rank = startIndex + index + 1;
+                            const volume = token.volume || 0;
+                            const volumeClass = getVolumeClass(volume);
+                            const isStable = volume < 100000;
+                            const price = token.priceUsd || 0;
+                            const graduationTime = formatGraduationTime(token);
+
+                            return `
+                                <tr class="token-row">
+                                    <td class="rank-cell">${rank}</td>
+                                    <td>
+                                        <div class="token-cell">
+                                            <div class="token-icon">${getTokenIcon(token)}</div>
+                                            <div class="token-details">
+                                                <div class="token-symbol">${token.symbol || 'Unknown'}</div>
+                                                <div class="token-name">${token.name || 'Unknown Token'}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="stat-cell holders">${formatNumber(token.holders)}</td>
+                                    <td class="stat-cell market-cap">$${formatNumber(token.marketCapUsd)}</td>
+                                    <td class="stat-cell volume ${volumeClass}">
+                                        $${formatNumber(volume)}
+                                        ${isStable ? '<span class="stable-badge">STABLE</span>' : ''}
+                                    </td>
+                                    <td class="stat-cell price">$${formatPrice(price)}</td>
+                                    <td class="stat-cell graduation">
+                                        ${graduationTime}
+                                        <div class="graduation-badge">GRADUATED</div>
+                                    </td>
+                                    <td class="stat-cell contract-address">
+                                        <span class="contract-short" 
+                                              title="Click to copy full address: ${token.mint || 'Unknown'}"
+                                              onclick="copyToClipboard('${token.mint || ''}', this)"
+                                              style="cursor: pointer; text-decoration: underline;">
+                                            ${formatContractAddress(token.mint)}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(currentTokens.length / tokensPerPage);
+            const pagination = document.getElementById('pagination');
+            const pageInfo = document.getElementById('pageInfo');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+
+            pagination.style.display = 'flex';
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(currentTokens.length / tokensPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderTokens(currentTokens);
+            }
+        }
+
+        async function loadTokens() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const tokenList = document.getElementById('tokenList');
+            const errorMessage = document.getElementById('errorMessage');
+            const pagination = document.getElementById('pagination');
+
+            // Show loading
+            loadingIndicator.style.display = 'block';
+            tokenList.style.display = 'none';
+            errorMessage.style.display = 'none';
+            pagination.style.display = 'none';
+
+            try {
+                const cacheData = await loadCachedTokens();
+                
+                currentTokens = cacheData.tokens;
+                totalResults = cacheData.tokens.length;
+                currentPage = 1;
+                
+                if (cacheData.tokens.length > 0) {
+                    renderTokens(cacheData.tokens);
+                    tokenList.style.display = 'block';
+                    console.log(`✅ Successfully loaded ${cacheData.tokens.length} graduated tokens from cache`);
+                } else {
+                    errorMessage.textContent = 'No graduated tokens found in cache. Run the cache update script to collect tokens.';
+                    errorMessage.style.display = 'block';
+                }
+
+                // Update UI
+                document.getElementById('totalResults').textContent = totalResults;
+                document.getElementById('lastUpdated').textContent = new Date(cacheData.lastUpdated).toLocaleTimeString();
+                
+            } catch (error) {
+                console.error('❌ Error loading cached tokens:', error);
+                errorMessage.textContent = error.message;
+                errorMessage.style.display = 'block';
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
+        }
+
+        function refreshData() {
+            console.log('🔄 Refreshing cached data...');
+            loadTokens();
+        }
+
+        // Initialize the leaderboard
+        console.log('🎯 Initializing Solana Memecoin Leaderboard (Graduated Tokens)...');
+        loadTokens();
+
+        // Auto-refresh every 5 minutes to check for cache updates
+        setInterval(() => {
+            console.log('⏰ Auto-refresh: Checking for cache updates...');
+            loadTokens();
+        }, 5 * 60 * 1000);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'967f226cda216602',t:'MTc1Mzk4NjI4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

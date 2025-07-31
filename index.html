@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Trench Dust | $DUST</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Dust Reveal Overlay -->
+    <div id="dust-reveal-overlay">
+        <div id="reveal-canvas"></div>
+        <div class="reveal-instructions">
+            <h2>✨ Sprinkle Your Dust ✨</h2>
+            <p>Use your enchanted pouch to sprinkle dust and reveal the secrets within...</p>
+            <div class="dust-bag-hint">🎒</div>
+        </div>
+    </div>
+
+    <div id="dust-container"></div>
+    <div class="dust-pool"></div>
+
+<nav>
+    <div class="logo">✨ MAGIC TRENCH DUST</div>
+    <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="leaderboard.html">Dust Leaderboard</a></li> 
+        <li><a href="https://x.com/DOntSellDust">Twitter</a></li>
+        <li><a href="#dustCanvas">Canvas</a></li> 
+    </ul>
+</nav>
+
+    <section class="hero" id="home">
+        <h1>MAGIC TRENCH DUST</h1>
+        <p>Never Sell Your Dust</p>
+        
+        <div class="cta-buttons">
+            <a href="https://jup.ag/swap/SOL-DUST" class="btn btn-primary">Buy on Jupiter 🚀</a>
+            <a href="https://pump.fun/magic-trench-dust" class="btn btn-secondary">View on Pump.fun</a>
+        </div>
+    </section>
+
+
+    <section class="features">
+        <div class="feature-card full-width" style="text-align: center; padding: 40px; border: 2px solid gold; border-radius: 20px; background: rgba(255,255,255,0.05); margin: 0 auto; max-width: 800px;">
+            <h2 style="font-size: 2rem; color: gold; margin-bottom: 20px;">✨ Dust Leaderboard ✨</h2>
+            <p style="color: #ddd; font-size: 1rem; margin-bottom: 30px;">
+                You jeeted one of these? Bro, you sold magic dust? Might as well jump off a cliff. Time to buy back and never touch that sell button again.
+            </p>
+            <a href="leaderboard.html" style="display: inline-block; padding: 12px 25px; font-weight: bold; font-size: 1rem; color: #1a0d2e; background: gold; border-radius: 8px; text-decoration: none; transition: transform 0.2s ease;">
+            🌟 View Leaderboard
+            </a>
+        </div>
+    </section>
+
+<!-- Features Section (Placeholder) -->
+<section class="features" id="features">
+    <div class="features-grid">
+        <!-- Feature cards can be added here later -->
+    </div>
+</section>
+
+<!-- Canvas Drawing Section -->
+<section class="dust-drawing-section">
+    <h2>✨ Create Magic with Dust ✨</h2>
+    <p>Use the magic dust on our canvas to hype your bags.</p>
+    <p>NEVER SELL YOUR DUST</p>  
+    
+    <div class="canvas-container">
+        <canvas id="dustCanvas"></canvas>
+        <div class="particle-count">Dust Particles: <span id="particleCount">0</span></div>
+        
+        <div class="canvas-controls">
+            <div class="color-picker-container">
+                <label>Dust Color:</label>
+                <div class="color-options">
+                    <div class="color-btn gold active" data-color="gold"></div>
+                    <div class="color-btn purple" data-color="purple"></div>
+                    <div class="color-btn blue" data-color="blue"></div>
+                    <div class="color-btn green" data-color="green"></div>
+                    <div class="color-btn red" data-color="red"></div>
+                    <div class="color-btn pink" data-color="pink"></div>
+                </div>
+            </div>
+            
+            <div class="brush-size-container">
+                <label>Particle Size:</label>
+                <input type="range" class="brush-size-slider" id="brushSize" min="0.5" max="3" step="0.1" value="1.5">
+            </div>
+            
+            <button class="clear-btn" id="clearCanvas">Clear Canvas</button>
+        </div>
+        
+        <div class="drawing-instructions">
+            Hold and drag to sprinkle magical dust across the canvas ✨
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn download-btn" id="downloadBtn">
+                 Download
+            </button>
+            <button class="action-btn share-btn" id="shareBtn">
+                 Share on Twitter
+            </button>
+        </div>
+    </div>
+</section>
+
+
+    <div class="contract-address">
+        <h3>Contract Address</h3>
+        <div class="contract-text" id="contract">DustMagic7xKjH3vNxZ8qP4mL9rY6wE2nF5tQ1bS8cV9uA</div>
+        <button class="copy-btn" onclick="copyContract()">Copy Address</button>
+    </div>
+
+    <div class="social-links">
+        <a href="https://x.com/DOntSellDust" class="social-link"> <img src="images/twitterlogo.png" alt="Twitter" width="50" height="50"> </a> 
+        <a href="https://dexscreener.com/" class="social-link"> <img src="images/dexlogo.png" alt="Twitter" width="50" height="50"> </a>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

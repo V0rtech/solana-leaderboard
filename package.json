@@ -1,0 +1,32 @@
+{
+  "name": "solana-token-leaderboard",
+  "version": "1.0.0",
+  "description": "Cached Solana token leaderboard for stable small-cap memecoins",
+  "main": "update_cache.js",
+  "scripts": {
+    "start": "node update_cache.js",
+    "test": "node update_cache.js --test",
+    "update": "node update_cache.js",
+    "help": "node update_cache.js --help"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  },
+  "keywords": [
+    "solana",
+    "crypto",
+    "tokens",
+    "leaderboard",
+    "memecoin",
+    "cache"
+  ],
+  "author": "Magic Trench Dust Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/solana-leaderboard"
+  }
+}
